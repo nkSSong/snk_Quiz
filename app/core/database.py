@@ -1,20 +1,25 @@
 # app/core/database.py
 
-import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from dotenv import load_dotenv
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-load_dotenv()
-Base = declarative_base()
+from sqlalchemy import create_engine  # ← sync용 추가
+from sqlalchemy.orm import scoped_session
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+import os
 
-engine = create_async_engine(DATABASE_URL, echo=True)
-
+# Async 사용 시 이 엔진 사용
+ASYNC_DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:postgres@db:5432/snkquiz")
+async_engine = create_async_engine(ASYNC_DATABASE_URL, echo=True)
 AsyncSessionLocal = sessionmaker(
-    bind=engine,
+    bind=async_engine,
     class_=AsyncSession,
-    expire_on_commit=False,
+    expire_on_commit=False
 )
+
+# 👉 Seed나 Alembic처럼 sync 접근 시 이 엔진 사용
+SYNC_DATABASE_URL = ASYNC_DATABASE_URL.replace("+asyncpg", "")
+sync_engine = create_engine(SYNC_DATABASE_URL)
+SessionLocal = scoped_session(sessionmaker(bind=sync_engine))
+
+Base = declarative_base()

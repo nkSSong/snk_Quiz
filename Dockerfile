@@ -6,6 +6,7 @@ RUN pip install --upgrade pip
 RUN pip install poetry
 
 COPY . /code/
+ENV PYTHONPATH="${PYTHONPATH}:/code"
 
 RUN poetry config virtualenvs.create false \
   && poetry install --no-root --no-interaction --no-ansi

@@ -1,8 +1,6 @@
 from fastapi import FastAPI
+from app.quiz.interface.router import router as quiz_router
 
-app = FastAPI()
+app = FastAPI(title="SNK Quiz API")
 
-
-@app.get("/")
-async def root():
-    return {"hi hello"}
+app.include_router(quiz_router, prefix="/quiz", tags=["quiz"])

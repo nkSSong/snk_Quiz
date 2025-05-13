@@ -3,7 +3,13 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
+from app.core.database import Base
+from app.user.domain.models import User
+from app.quiz.domain.models import Quiz, Question, Option, QuizResult, Answer
+
+
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # 👉 async URL 예: postgresql+asyncpg://user:pass@db:5432/dbname
@@ -15,8 +21,6 @@ config.set_main_option("sqlalchemy.url", db_url)
 
 fileConfig(config.config_file_name)
 
-# 모델 metadata 연결
-from app.quiz.domain.models import Base
 target_metadata = Base.metadata
 
 def run_migrations_online():

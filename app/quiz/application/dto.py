@@ -7,14 +7,21 @@ class OptionCreate(BaseModel):
 
 class QuestionCreate(BaseModel):
     text: str
-    options: List[OptionCreate]
+    options: List[OptionCreate] = Field(..., min_items=1)
 
 class QuizCreateRequest(BaseModel):
     title: str
     question_count: int
     is_question_order_random: bool = False
     is_option_order_random: bool = False
-    questions: List[QuestionCreate]
+    questions: List[QuestionCreate] = Field(..., min_items=1)
+
+class QuizUpdateRequest(BaseModel):
+    title: str
+    question_count: int
+    is_question_order_random: bool = False
+    is_option_order_random: bool = False
+    questions: List[QuestionCreate] = Field(..., min_items=1)
 
 class QuizListResponse(BaseModel):
     id: int

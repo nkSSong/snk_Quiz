@@ -11,6 +11,11 @@ def run_seed():
         if db.query(User).count() == 0:
             admin = User(email="admin@example.com", password="hashed123", is_admin=True)
             db.add(admin)
+            db.add_all([
+                User(email="user1@example.com", password="userpass1", is_admin=False),
+                User(email="user2@example.com", password="userpass2", is_admin=False),
+                User(email="user3@example.com", password="userpass3", is_admin=False),
+            ])
 
         if db.query(Quiz).count() == 0:
             quizzes = []

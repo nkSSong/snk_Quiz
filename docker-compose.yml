@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:14
+    container_name: snkquiz-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: snkquiz
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - snkquiz-net
+
+  web:
+    build:
+      context: .
+    container_name: snkquiz-app
+    command: >
+      bash -c "
+        poetry run alembic upgrade head &&
+        poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+      "
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/snkquiz
+    depends_on:
+      - db
+    volumes:
+      - .:/code
+    networks:
+      - snkquiz-net
+
+volumes:
+  postgres_data:
+
+networks:
+  snkquiz-net:
